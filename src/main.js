@@ -58,8 +58,13 @@ async function parear() {
         body: JSON.stringify({ codigo, nome, versao: VERSAO, plataforma: `${process.platform}-${process.arch}` }),
         signal: AbortSignal.timeout(20000),
       });
-      const dados = await r.json().catch(() => ({}));
-      if (!r.ok || !dados.token) { console.log(`\n✗ ${dados.error || 'Não foi possível conectar (HTTP ' + r.status + ')'}\n  Gere um novo código no painel e tente de novo.\n`); continue; }
+      const texto = await r.text();
+      let dados = {};
+      try { dados = JSON.parse(texto); } catch {}
+      if (!r.ok || !dados.token) {
+        log(`Pareamento recusado: HTTP ${r.status} ${r.headers.get('content-type')} ${r.url} :: ${texto.slice(0, 200).replace(/\s+/g, ' ')}`);
+        console.log(`\n✗ ${dados.error || 'Não foi possível conectar (HTTP ' + r.status + (dados.error ? '' : ', resposta inesperada do servidor') + ')'}\n  Gere um novo código no painel e tente de novo.\n`); continue;
+      }
       const conf = { supabase_url: cfg.supabase_url, supabase_key: cfg.supabase_key, tenant_id: dados.tenant_id, agente_id: dados.agente_id, token: dados.token, loja_nome: dados.loja_nome };
       fs.writeFileSync(ARQ_CONFIG, JSON.stringify(conf, null, 2));
       console.log(`\n✓ Conectado à loja "${dados.loja_nome || ''}". Pode fechar esta janela; a impressão continua em segundo plano.`);

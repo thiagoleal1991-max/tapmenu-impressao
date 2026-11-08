@@ -1,6 +1,6 @@
 {
   "name": "tapmenu-impressao",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Programa de impressão TapMenu (pareamento + impressão de comandas)",
   "main": "src/main.js",
   "private": true,
