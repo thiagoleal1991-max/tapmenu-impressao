@@ -1,0 +1,14 @@
+{
+  "name": "tapmenu-impressao",
+  "version": "5.0.0",
+  "description": "Programa de impressão TapMenu (pareamento + impressão de comandas)",
+  "main": "src/main.js",
+  "private": true,
+  "scripts": {
+    "start": "node src/main.js",
+    "build": "pkg . --no-bytecode --public --public-packages \"*\" --targets node22-win-x64 --output dist/TapMenuImpressao.exe"
+  },
+  "bin": "src/main.js",
+  "pkg": { "scripts": ["src/*.js"] },
+  "devDependencies": { "@yao-pkg/pkg": "^6.25.0" }
+}

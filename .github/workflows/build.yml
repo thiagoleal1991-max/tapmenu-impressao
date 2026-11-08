@@ -1,0 +1,44 @@
+name: Gerar instalador
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Versão
+        id: v
+        shell: bash
+        run: |
+          VER=$(node -p "require('./package.json').version")
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+      - run: npm install
+      - run: npm run build
+      - name: Testar executável
+        shell: pwsh
+        run: |
+          $v = & .\dist\TapMenuImpressao.exe --versao
+          Write-Host "versão do exe: $v"
+          if ($v -ne "${{ steps.v.outputs.version }}") { throw "exe não executou corretamente" }
+      - name: Instalador (Inno Setup)
+        shell: pwsh
+        run: |
+          choco install innosetup -y --no-progress
+          $env:APP_VERSION = "${{ steps.v.outputs.version }}"
+          & "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" installer\TapMenuImpressao.iss
+      - name: Publicar release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/TapMenuImpressao-Setup.exe
+          name: TapMenu Impressão ${{ github.ref_name }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: instalador
+          path: dist/TapMenuImpressao-Setup.exe
