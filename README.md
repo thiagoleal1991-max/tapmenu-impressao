@@ -5,4 +5,4 @@ Programa que roda no computador da loja, pareia com o painel TapMenu por código
 - Instalador: baixe `TapMenuImpressao-Setup.exe` na aba **Releases**.
 - Pareamento: painel › Configurações › Impressoras › Conectar computador.
 - Logs: `%LOCALAPPDATA%\TapMenuImpressao\log.txt`
-- Atualização automática via Releases (tag `vX.Y.Z`; mantenha `package.json` igual à tag).
+- Atualização automática via Releases (a versão do `package.json` vira a tag `vX.Y.Z` a cada push na `main`).
